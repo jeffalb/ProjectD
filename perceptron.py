@@ -100,6 +100,10 @@ class PerceptronClassifier:
         featuresWeights = []
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # we use util.counter to gives us a list of the keys sorted by highest weight
+        # Next we set the featuresWeights as the first 100 of this list
+        sortedlist = self.weights[label].sortedKeys()
+
+        featuresWeights = sortedlist[:100]
 
         return featuresWeights
