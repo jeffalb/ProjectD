@@ -55,7 +55,27 @@ class PerceptronClassifier:
             print "Starting iteration ", iteration, "..."
             for i in range(len(trainingData)):
                 "*** YOUR CODE HERE ***"
-                util.raiseNotDefined()
+                # First we set up the training datum and default a scoreMax and y'
+                datum = trainingData[i]
+                scoreMax = 0
+                yAccent = 0
+
+                # For every label in the perceptron's legalLabels we calculate the score
+                # If it is higher than the previous we set it as the max score and save the
+                # label (y') associated with it.
+                for y in self.legalLabels:
+                    score = datum * self.weights[y]
+
+                    if score > scoreMax:
+                        scoreMax = score
+                        yAccent = y
+
+                yTrue = trainingLabels[i]
+                
+                # Next we compare the y and y'. If it differs the weights are adjusted
+                if yAccent != yTrue:
+                    self.weights[yTrue] = self.weights[yTrue] + datum
+                    self.weights[yAccent] = self.weights[yAccent] - datum
 
     def classify(self, data ):
         """
