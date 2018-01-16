@@ -14,7 +14,9 @@
 
 # Mira implementation
 import util
+
 PRINT = True
+
 
 class MiraClassifier:
     """
@@ -23,7 +25,8 @@ class MiraClassifier:
     Note that the variable 'datum' in this code refers to a counter of features
     (not to a raw samples.Datum).
     """
-    def __init__( self, legalLabels, max_iterations):
+
+    def __init__(self, legalLabels, max_iterations):
         self.legalLabels = legalLabels
         self.type = "mira"
         self.automaticTuning = False
@@ -36,12 +39,12 @@ class MiraClassifier:
         "Resets the weights of each label to zero vectors"
         self.weights = {}
         for label in self.legalLabels:
-            self.weights[label] = util.Counter() # this is the data-structure you should use
+            self.weights[label] = util.Counter()  # this is the data-structure you should use
 
     def train(self, trainingData, trainingLabels, validationData, validationLabels):
         "Outside shell to call your method. Do not modify this method."
 
-        self.features = trainingData[0].keys() # this could be useful for your code later...
+        self.features = trainingData[0].keys()  # this could be useful for your code later...
 
         if (self.automaticTuning):
             Cgrid = [0.002, 0.004, 0.008]
@@ -61,9 +64,66 @@ class MiraClassifier:
         representing a vector of values.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        self.features = trainingData[0].keys()
+        bestResult = 0
+        for C in Cgrid:
+            weights = {}
+            for label in self.legalLabels:
+                weights[label] = util.Counter()
+            for iteration in range(self.max_iterations):
+                print "Starting iteration ", iteration, "..."
+                for i in range(len(trainingData)):
+                    # First we set up the training datum and default a scoreMax and y'
+                    datum = trainingData[i].copy()
+                    scoreMax = 0
+                    yAccent = 0
 
-    def classify(self, data ):
+                    # For every label in the perceptron's legalLabels we calculate the score
+                    # If it is higher than the previous we set it as the max score and save the
+                    # label (y') associated with it.
+                    for y in self.legalLabels:
+                        score = datum * weights[y]
+
+                        if score > scoreMax:
+                            scoreMax = score
+                            yAccent = y
+
+                    yTrue = trainingLabels[i]
+
+                    # Next we compare the y and y'. If it differs the weights are adjusted
+                    if yAccent != yTrue:
+                        tau = 0.5 * ((weights[yAccent] - weights[yTrue]) * datum + 1.0) / (datum * datum)
+                        if C < tau:
+                            tau = C
+                        if tau != 0:
+                            datum.divideAll(1 / tau)  # util.counter lacks a multiplyAll method
+                            weights[yTrue] = weights[yTrue] + datum
+                            weights[yAccent] = weights[yAccent] - datum
+
+            result = 0
+            for i in range(len(validationData)):
+                datum = validationData[i]
+                scoreMax = 0
+                yAccent = 0
+                # For every label in the perceptron's legalLabels we calculate the score
+                # If it is higher than the previous we set it as the max score and save the
+                # label (y') associated with it.
+                for y in self.legalLabels:
+                    score = datum * weights[y]
+                    if score > scoreMax:
+                        scoreMax = score
+                        yAccent = y
+                yTrue = validationLabels[i]
+                # check if the instance is classified correctly:
+                if yTrue == yAccent:
+                    result += 1
+            # check if the number of correct classifications with the current value of C is greater than
+            # the number of correct classifications of previous values of C:
+            if result > bestResult:
+                bestResult = result
+                self.weights = weights
+
+    def classify(self, data):
         """
         Classifies each datum as the label that most closely matches the prototype vector
         for that label.  See the project description for details.
@@ -77,5 +137,3 @@ class MiraClassifier:
                 vectors[l] = self.weights[l] * datum
             guesses.append(vectors.argMax())
         return guesses
-
-
