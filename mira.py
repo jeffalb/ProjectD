@@ -83,7 +83,6 @@ class MiraClassifier:
                     # label (y') associated with it.
                     for y in self.legalLabels:
                         score = datum * weights[y]
-
                         if score > scoreMax:
                             scoreMax = score
                             yAccent = y
