@@ -78,7 +78,40 @@ def enhancedFeatureExtractorDigit(datum):
     features =  basicFeatureExtractorDigit(datum)
 
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    explored = []
+    fringe = util.Queue()
+    counter = 0
+
+    coordinates = []
+
+    for x in range(DIGIT_DATUM_WIDTH):
+        for y in range(DIGIT_DATUM_HEIGHT ):
+            if features[(x,y)] is 1:
+                coordinates.append((x,y))
+
+    for c in coordinates:
+        if c not in explored:
+            fringe.push(c)
+            counter += 1
+            while not fringe.isEmpty():
+                currentnode = fringe.pop()
+
+                if currentnode not in explored:
+                    x, y = currentnode
+                    explored.append(currentnode)
+
+                    if (x - 1, y) in coordinates:
+                        fringe.push((x - 1, y))
+
+                    if (x + 1, y) in coordinates:
+                        fringe.push((x + 1, y))
+
+                    if (x, y - 1) in coordinates:
+                        fringe.push((x, y - 1))
+
+                    if (x, y + 1) in coordinates:
+                        fringe.push((x, y + 1))
+    features[counter] = 1
 
     return features
 
