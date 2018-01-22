@@ -50,22 +50,21 @@ class PerceptronClassifierPacman(PerceptronClassifier):
             print "Starting iteration ", iteration, "..."
             for i in range(len(trainingData)):
                 "*** YOUR CODE HERE ***"
+                # First we set up the training datum and default a scoreMax and y'
+                # For every label in the perceptron's legalLabels we calculate the score
+                # If it is higher than the previous we set it as the max score and save the
+                # label (y') associated with it.
                 scoreMax = -10000
                 yAccent = 0
-                for a in trainingData[i][1]:
-                    # First we set up the training datum and default a scoreMax and y'
-                    datum = trainingData[i][0][a]
-                    # For every label in the perceptron's legalLabels we calculate the score
-                    # If it is higher than the previous we set it as the max score and save the
-                    # label (y') associated with it.
-                    score = datum * self.weights
+                datum = trainingData[i][0]
+                for y in trainingData[i][1]:
+                    score = datum[y] * self.weights
                     if score > scoreMax:
                         scoreMax = score
-                        yAccent = a
-                        bestDatum = datum
+                        yAccent = y
                 yTrue = trainingLabels[i]
                 # Next we compare the y and y'. If it differs the weights are adjusted
                 if yAccent != yTrue:
-                    self.weights[yTrue] = self.weights + bestDatum
-                    self.weights[yAccent] = self.weights - bestDatum
+                    self.weights = self.weights + datum[yTrue]
+                    self.weights = self.weights - datum[yAccent]
 
