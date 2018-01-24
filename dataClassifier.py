@@ -226,7 +226,15 @@ def enhancedPacmanFeatures(state, action):
     """
     features = util.Counter()
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    next_state = state.generateSuccessor(0,action)
+    pacposition = next_state.getPacmanPosition()
+
+
+    # Improvement of the score
+    features["score"] = next_state.getScore()
+    features["win"] = next_state.isWin()
+    features["lose"] = next_state.isLose()
+    
     return features
 
 
