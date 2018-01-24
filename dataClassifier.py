@@ -78,15 +78,17 @@ def enhancedFeatureExtractorDigit(datum):
     features =  basicFeatureExtractorDigit(datum)
 
     "*** YOUR CODE HERE ***"
+    """
+    #Calculeren hoeveel aparte witte vlakken er zijn
     explored = []
     fringe = util.Queue()
     counter = 0
 
     coordinates = []
 
-    for x in range(DIGIT_DATUM_WIDTH):
-        for y in range(DIGIT_DATUM_HEIGHT ):
-            if features[(x,y)] is 1:
+    for x in range(1, DIGIT_DATUM_WIDTH):
+        for y in range(1, DIGIT_DATUM_HEIGHT ):
+            if features[(x,y)] is 0:
                 coordinates.append((x,y))
 
     for c in coordinates:
@@ -111,7 +113,74 @@ def enhancedFeatureExtractorDigit(datum):
 
                     if (x, y + 1) in coordinates:
                         fringe.push((x, y + 1))
+    #if counter is 2:
+    #    features["vlak"] = 1
+    #else:
+    #    features["vlak"] = 0
+
+
     features[counter] = 1
+    """
+    # Calculeren waar de edge zit van beide kanten
+    for x in range(1, DIGIT_DATUM_WIDTH):
+        for y in range(1, DIGIT_DATUM_HEIGHT):
+
+            is_edge_x = datum.getPixel(x,y) > datum.getPixel(x-1,y)
+
+            is_edge_y = datum.getPixel(x,y) > datum.getPixel(x,y-1)
+
+            features[(x,y,"horizontal")] = int(is_edge_x)
+
+            features[(x,y,"vertical")] = int(is_edge_y)
+
+    for x in range(DIGIT_DATUM_WIDTH,1):
+        for y in range(DIGIT_DATUM_HEIGHT,1):
+            is_edge_x = datum.getPixel(x, y) > datum.getPixel(x + 1, y)
+
+            is_edge_y = datum.getPixel(x, y) > datum.getPixel(x, y + 1)
+
+            features[(x, y, "horizontal_back")] = int(is_edge_x)
+
+            features[(x, y, "vertical_back")] = int(is_edge_y)
+
+    # Calculeren of een lijn leeg is en of een lijn een gat heeft
+    for y in range(DIGIT_DATUM_HEIGHT):
+        is_not_white = 0
+        list_pixel_bl = {}
+        for x in range(DIGIT_DATUM_WIDTH):
+            if datum.getPixel(x,y) > 0:
+                is_not_white += 1
+                list_pixel_bl[x] = 1
+            else:
+                list_pixel_bl[x] = 0
+
+        if is_not_white is 0:
+            features[("white line",y)] = 1
+        else:
+            features[("white line", y)] = 0
+
+        right_edge = 0
+        for n in range(DIGIT_DATUM_WIDTH - 1):
+            if list_pixel_bl[n] is 1 and list_pixel_bl[n+1] is 0:
+                right_edge += 1
+
+        if right_edge > 1:
+            features[("has hole", y)] = 1
+        else:
+            features[("has hole", y)] = 0
+
+    """
+    # Calculeren hoe veel pixels wit zijn
+    is_shape = 0
+    for x in range(DIGIT_DATUM_WIDTH):
+        for y in range(DIGIT_DATUM_HEIGHT):
+            if datum.getPixel(x,y) > 0:
+                is_shape += 1
+
+    for n in range(100):
+        features[("procent digit",n)] = int(n is int((is_shape / len(features)) * 100))
+
+    """
 
     return features
 
