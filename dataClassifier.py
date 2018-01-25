@@ -228,8 +228,10 @@ def enhancedPacmanFeatures(state, action):
     nextState = state.generatePacmanSuccessor(action)
     currentCapsules = state.getCapsules()
     nextCapsules = nextState.getCapsules()
-    features['capsuleCount'] = len(nextCapsules)
-    features['capsuleChange'] = len(currentCapsules) - len(nextCapsules)
+    features['capsuleEaten'] = len(currentCapsules) - len(nextCapsules)
+    currentFoodCount = state.getNumFood()
+    nextFoodCount = nextState.getNumFood()
+    features['foodEaten'] = currentFoodCount - nextFoodCount
     positionPacman = nextState.getPacmanPosition()
 
     ghostPositions = nextState.getGhostPositions()
