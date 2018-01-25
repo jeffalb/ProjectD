@@ -72,6 +72,16 @@ def enhancedFeatureExtractorDigit(datum):
     for this datum (datum is of type samples.Datum).
 
     ## DESCRIBE YOUR ENHANCED FEATURES HERE...
+    
+    1. Calculate the number of white spaces (no noticable difference, unused)
+    
+    2. Calculate the edge of the Digit from the top left and bottom right
+    
+    3. If a row is empty or not
+    
+    4. If a row has a hole in the list of pixels of that row
+    
+    5. The number of > 1 pixels in a digit. (no noticable difference, unused)
 
     ##
     """
@@ -225,6 +235,8 @@ def enhancedPacmanFeatures(state, action):
     It should return a counter with { <feature name> : <feature value>, ... }
     """
     features = util.Counter()
+    "*** YOUR CODE HERE ***"
+    
     nextState = state.generatePacmanSuccessor(action)
     currentCapsules = state.getCapsules()
     nextCapsules = nextState.getCapsules()
