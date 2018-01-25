@@ -278,6 +278,18 @@ def enhancedPacmanFeatures(state, action):
     """""
     if 0 < distanceToCapsule < 7:
         features[('distanceToCapsule', distanceToCapsule)] = 1
+=======
+    "*** YOUR CODE HERE ***"
+    next_state = state.generateSuccessor(0,action)
+    pacposition = next_state.getPacmanPosition()
+
+
+    # Improvement of the score
+    features["score"] = next_state.getScore()
+    features["win"] = next_state.isWin()
+    features["lose"] = next_state.isLose()
+    
+>>>>>>> 59be5f6f01635ddb2c7297a0e83e796467611d3d
     return features
 
 
