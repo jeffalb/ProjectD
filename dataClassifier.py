@@ -612,6 +612,14 @@ def runClassifier(args, options):
             print ("=== Features with high weight for label %d ==="%l)
             printImage(features_weights)
 
+    if ((options.weights) & (options.classifier == "mira")):
+        for l in classifier.legalLabels:
+            features_weights = classifier.findHighWeightFeatures(l)
+            print ("=== Features with high weight for label %d ===" % l)
+            printImage(features_weights)
+
+
+
 if __name__ == '__main__':
     # Read input
     args, options = readCommand( sys.argv[1:] )

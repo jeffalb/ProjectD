@@ -137,3 +137,18 @@ class MiraClassifier:
                 vectors[l] = self.weights[l] * datum
             guesses.append(vectors.argMax())
         return guesses
+
+    def findHighWeightFeatures(self, label):
+        """
+        Returns a list of the 100 features with the greatest weight for some label
+        """
+        featuresWeights = []
+
+        "*** YOUR CODE HERE ***"
+        # we use util.counter to gives us a list of the keys sorted by highest weight
+        # Next we set the featuresWeights as the first 100 of this list
+        sortedlist = self.weights[label].sortedKeys()
+
+        featuresWeights = sortedlist[:100]
+
+        return featuresWeights
