@@ -116,6 +116,7 @@ class MiraClassifier:
                 # check if the instance is classified correctly:
                 if yTrue == yAccent:
                     result += 1
+            print(str(bestResult) + " correct out of 100 with C value " + str(C))
             # check if the number of correct classifications with the current value of C is greater than
             # the number of correct classifications of previous values of C:
             if result > bestResult:
