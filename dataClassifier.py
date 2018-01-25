@@ -240,10 +240,14 @@ def enhancedPacmanFeatures(state, action):
     distanceToCapsule = 0
     distanceToGhost = 0
     distanceToFood = 0
+    capsuleFound = False
+    ghostFound = False
+    foodFound = False
+    stop = False
     # As long as the fringe is not empty we take an item out of it and
-    # expand it's successors. If the encountered state is not already visited
-    # and if it isn't the goal state then we add it's succors to the fringe.
-    while not fringe.isEmpty() and distanceToCapsule == 0:
+    # expand its successors. If the encountered state is not already visited
+    # then we add its successors to the fringe.
+    while not fringe.isEmpty() and not stop:
         currentnode = fringe.pop()
         currentPosition = currentnode[0]
         x, y = currentPosition
@@ -252,10 +256,15 @@ def enhancedPacmanFeatures(state, action):
         if not currentPosition in explored:
             explored.append(currentPosition)
 
-            if currentPosition in nextCapsules:
+            if currentPosition in nextCapsules and not capsuleFound:
                 distanceToCapsule = len(path)
-            if currentPosition in ghostPositions:
+                capsuleFound = True
+            if currentPosition in ghostPositions and not ghostFound:
                 distanceToGhost = len(path)
+                ghostFound = True
+            if nextState.hasFood(x, y) and not foodFound:
+                distanceToFood = len(path)
+                foodFound = True
             successors = []
             if not state.hasWall(x-1, y):
                 successors.append((x-1,y))
@@ -268,6 +277,7 @@ def enhancedPacmanFeatures(state, action):
             for position in successors:
                 npath = path + [position]
                 fringe.push((position, npath))
+        stop = capsuleFound and ghostFound and foodFound
     """"
     bestDistance = 4
     for capsule in nextCapsules:
@@ -276,20 +286,17 @@ def enhancedPacmanFeatures(state, action):
             bestDistance = manhattanDistance
     if bestDistance != 1000:
     """""
-    if 0 < distanceToCapsule < 7:
-        features[('distanceToCapsule', distanceToCapsule)] = 1
-=======
-    "*** YOUR CODE HERE ***"
-    next_state = state.generateSuccessor(0,action)
-    pacposition = next_state.getPacmanPosition()
-
+    for i in range(1, distanceToCapsule):
+        features[('distanceToCapsule', i)] = 1
+    for i in range(1, distanceToGhost):
+        features[('distanceToGhost', i)] = 1
+    for i in range(1, distanceToFood):
+        features[('distanceToFood', i)] = 1
 
     # Improvement of the score
-    features["score"] = next_state.getScore()
-    features["win"] = next_state.isWin()
-    features["lose"] = next_state.isLose()
-    
->>>>>>> 59be5f6f01635ddb2c7297a0e83e796467611d3d
+    features["score"] = nextState.getScore()
+    features["win"] = nextState.isWin()
+    features["lose"] = nextState.isLose()
     return features
 
 

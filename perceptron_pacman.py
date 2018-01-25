@@ -54,9 +54,9 @@ class PerceptronClassifierPacman(PerceptronClassifier):
                 # For every label in the perceptron's legalLabels we calculate the score
                 # If it is higher than the previous we set it as the max score and save the
                 # label (y') associated with it.
-                scoreMax = -10000
-                yAccent = 0
                 datum = trainingData[i][0]
+                yAccent = trainingData[i][1][0]
+                scoreMax = datum[yAccent] * self.weights
                 for y in trainingData[i][1]:
                     score = datum[y] * self.weights
                     if score > scoreMax:
