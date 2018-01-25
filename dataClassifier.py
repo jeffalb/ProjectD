@@ -225,9 +225,62 @@ def enhancedPacmanFeatures(state, action):
     It should return a counter with { <feature name> : <feature value>, ... }
     """
     features = util.Counter()
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    nextState = state.generatePacmanSuccessor(action)
+    currentCapsules = state.getCapsules()
+    nextCapsules = nextState.getCapsules()
+    features['capsuleCount'] = len(nextCapsules)
+    features['capsuleChange'] = len(currentCapsules) - len(nextCapsules)
+    positionPacman = nextState.getPacmanPosition()
+
+    ghostPositions = nextState.getGhostPositions()
+    path = []
+    explored = []
+    fringe = util.Queue()
+    fringe.push((positionPacman, path))
+    distanceToCapsule = 0
+    distanceToGhost = 0
+    distanceToFood = 0
+    # As long as the fringe is not empty we take an item out of it and
+    # expand it's successors. If the encountered state is not already visited
+    # and if it isn't the goal state then we add it's succors to the fringe.
+    while not fringe.isEmpty() and distanceToCapsule == 0:
+        currentnode = fringe.pop()
+        currentPosition = currentnode[0]
+        x, y = currentPosition
+        path = currentnode[1]
+
+        if not currentPosition in explored:
+            explored.append(currentPosition)
+
+            if currentPosition in nextCapsules:
+                distanceToCapsule = len(path)
+            if currentPosition in ghostPositions:
+                distanceToGhost = len(path)
+            successors = []
+            if not state.hasWall(x-1, y):
+                successors.append((x-1,y))
+            if not state.hasWall(x+1, y):
+                successors.append((x+1,y))
+            if not state.hasWall(x, y-1):
+                successors.append((x, y-1))
+            if not state.hasWall(x, y+1):
+                successors.append((x,y+1))
+            for position in successors:
+                npath = path + [position]
+                fringe.push((position, npath))
+    """"
+    bestDistance = 4
+    for capsule in nextCapsules:
+        manhattanDistance = util.manhattanDistance(positionPacman, capsule)
+        if manhattanDistance < bestDistance:
+            bestDistance = manhattanDistance
+    if bestDistance != 1000:
+    """""
+    if 0 < distanceToCapsule < 7:
+        features[('distanceToCapsule', distanceToCapsule)] = 1
     return features
+
+
 
 
 def contestFeatureExtractorDigit(datum):
@@ -274,7 +327,7 @@ def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
     #     if (prediction != truth):
     #         print "==================================="
     #         print "Mistake on example %d" % i
-    #         print "Predicted %d; truth is %d" % (prediction, truth)
+    #         # print "Predicted %d; truth is %d" % (prediction, truth)
     #         print "Image: "
     #         print rawTestData[i]
     #         break
